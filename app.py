@@ -13,16 +13,15 @@ api_keys = {}
 # Generate API Key Endpoint
 @app.route('/generate_api_key', methods=['GET'])
 def generate_api_key():
-    api_key = str(uuid.uuid4())
-    api_keys[api_key] = {'emails_sent': 0}
+    api_key = str(uuid.uuid4())  # Generate a unique API key
+    api_keys[api_key] = {'emails_sent': 0}  # Store the API key and track the emails sent
     return jsonify({'api_key': api_key, 'message': 'API key generated successfully'})
 
 # Serve the index.html file from the static folder
 @app.route('/')
 def serve_index():
     try:
-        # This serves the 'index.html' from the 'static' directory
-        return send_from_directory('static', 'index.html')
+        return send_from_directory('static', 'index.html')  # Serve your index.html from the 'static' folder
     except FileNotFoundError:
         return jsonify({'error': 'index.html file not found'}), 404
 
@@ -61,9 +60,9 @@ def send_email():
         return jsonify({'error': 'Missing required fields'}), 400
 
     try:
-        # Relay configuration (customized for the API-based approach)
-        smtp_server = "localhost"  # Replace with your relay server or localhost for testing
-        smtp_port = 25  # Use 25, 587, or any available SMTP port
+        # Your SMTP server settings for local testing
+        smtp_server = "localhost"  # You can change this to your own SMTP server
+        smtp_port = 25  # Use the port appropriate for your SMTP server (25, 587, etc.)
 
         # Create the SMTP connection
         server = smtplib.SMTP(smtp_server, smtp_port)
@@ -78,12 +77,12 @@ def send_email():
 
             # Send the email
             server.sendmail(from_email, email, msg.as_string())
-            api_keys[api_key]['emails_sent'] += 1
+            api_keys[api_key]['emails_sent'] += 1  # Increment the email count for the API key
 
-        server.quit()
-        return jsonify({'message': f'{len(to_emails)} emails sent successfully!'})
+        server.quit()  # Close the connection to the SMTP server
+        return jsonify({'message': f'{len(to_emails)} emails sent successfully!'})  # Respond with success
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500  # Handle any errors during email sending
 
 
 if __name__ == '__main__':
