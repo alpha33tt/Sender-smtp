@@ -34,7 +34,15 @@ def send_email():
     from_name = data.get('from_name', 'No Name')
     to_emails = data.get('to_emails', [])
     subject = data.get('subject', 'No Subject')
-    html_content = data.get('html_content', '')
+
+    # Read HTML content from 'index.html' if not provided
+    html_content = data.get('html_content', None)
+    if not html_content:
+        try:
+            with open('index.html', 'r') as file:
+                html_content = file.read()
+        except FileNotFoundError:
+            return jsonify({'error': 'index.html file not found'}), 400
 
     # Validate required fields
     if not from_email or not to_emails or not subject or not html_content:
