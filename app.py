@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import uuid
 import os
 
@@ -16,6 +16,15 @@ def generate_api_key():
     api_key = str(uuid.uuid4())
     api_keys[api_key] = {'emails_sent': 0}
     return jsonify({'api_key': api_key, 'message': 'API key generated successfully'})
+
+# Serve the index.html file from the static folder
+@app.route('/')
+def serve_index():
+    try:
+        # This serves the 'index.html' from the 'static' directory
+        return send_from_directory('static', 'index.html')
+    except FileNotFoundError:
+        return jsonify({'error': 'index.html file not found'}), 404
 
 # Send Email Endpoint
 @app.route('/send_email', methods=['POST'])
@@ -39,7 +48,7 @@ def send_email():
     html_content = data.get('html_content', None)
     if not html_content:
         try:
-            with open('index.html', 'r') as file:
+            with open('static/index.html', 'r') as file:
                 html_content = file.read()
         except FileNotFoundError:
             return jsonify({'error': 'index.html file not found'}), 400
