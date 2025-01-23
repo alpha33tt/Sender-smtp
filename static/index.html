@@ -53,6 +53,11 @@
             font-size: 16px;
             text-align: center;
         }
+        .success-message {
+            color: green;
+            font-weight: bold;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -83,6 +88,7 @@
         </form>
 
         <p id="responseMessage" class="message"></p>
+        <p id="successMessage" class="success-message"></p>
     </div>
 
     <script>
@@ -94,6 +100,7 @@
             const result = await response.json();
             apiKey = result.api_key;
             document.getElementById('apiKey').innerText = apiKey;
+            document.getElementById('successMessage').innerText = "API Key generated successfully!";
             alert('API Key generated successfully!');
         });
 
