@@ -58,16 +58,24 @@
             font-weight: bold;
             text-align: center;
         }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>API Key Email Sender</h1>
+        
+        <!-- API Key Display Section -->
         <div>
-            <p>Your API Key: <span id="apiKey" class="api-key">Not Generated</span></p>
+            <p>Generated API Key: <span id="apiKey" class="api-key">Not Generated</span></p>
             <button id="generateApiKeyBtn">Generate API Key</button>
         </div>
 
+        <!-- Email Form Section -->
         <form id="emailForm">
             <label for="fromEmail">From Email:</label>
             <input type="email" id="fromEmail" placeholder="example@example.com" required>
@@ -84,8 +92,10 @@
             <button type="button" id="sendEmailBtn">Send Email</button>
         </form>
 
+        <!-- Response & Success Messages -->
         <p id="responseMessage" class="message"></p>
         <p id="successMessage" class="success-message"></p>
+        <p id="errorMessage" class="error-message"></p>
     </div>
 
     <script>
@@ -93,12 +103,22 @@
 
         // Generate API Key
         document.getElementById('generateApiKeyBtn').addEventListener('click', async () => {
-            const response = await fetch('http://localhost:5000/generate_api_key');
-            const result = await response.json();
-            apiKey = result.api_key;
-            document.getElementById('apiKey').innerText = apiKey;
-            document.getElementById('successMessage').innerText = "API Key generated successfully!";
-            alert('API Key generated successfully!');
+            try {
+                const response = await fetch('http://localhost:5000/generate_api_key');
+                const result = await response.json();
+                if (result.api_key) {
+                    apiKey = result.api_key;
+                    document.getElementById('apiKey').innerText = apiKey;
+                    document.getElementById('successMessage').innerText = "API Key generated successfully!";
+                    document.getElementById('errorMessage').innerText = '';  // Clear any previous errors
+                } else {
+                    document.getElementById('errorMessage').innerText = 'Error generating API key';
+                    document.getElementById('successMessage').innerText = '';  // Clear success message
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').innerText = 'Failed to generate API key. Try again!';
+                document.getElementById('successMessage').innerText = '';  // Clear success message
+            }
         });
 
         // Send Email
@@ -113,22 +133,40 @@
             const subject = document.getElementById('subject').value;
             const body = document.getElementById('body').value;
 
-            const response = await fetch('http://localhost:5000/send_email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'API-Key': apiKey  // Send API key in headers
-                },
-                body: JSON.stringify({
-                    from_email: fromEmail,
-                    to_emails: toEmails,
-                    subject: subject,
-                    body: body
-                })
-            });
+            // Validate required fields
+            if (!fromEmail || !toEmails.length || !subject || !body) {
+                document.getElementById('errorMessage').innerText = 'Please fill all fields!';
+                document.getElementById('successMessage').innerText = '';  // Clear success message
+                return;
+            }
 
-            const result = await response.json();
-            document.getElementById('responseMessage').innerText = result.message || result.error;
+            try {
+                const response = await fetch('http://localhost:5000/send_email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'API-Key': apiKey  // Send API key in headers
+                    },
+                    body: JSON.stringify({
+                        from_email: fromEmail,
+                        to_emails: toEmails,
+                        subject: subject,
+                        body: body
+                    })
+                });
+
+                const result = await response.json();
+                if (result.message) {
+                    document.getElementById('responseMessage').innerText = result.message;
+                    document.getElementById('errorMessage').innerText = '';  // Clear error messages
+                } else {
+                    document.getElementById('errorMessage').innerText = result.error || 'An error occurred while sending the email';
+                    document.getElementById('responseMessage').innerText = '';  // Clear success message
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').innerText = 'Failed to send email. Try again!';
+                document.getElementById('responseMessage').innerText = '';  // Clear success message
+            }
         });
     </script>
 </body>
