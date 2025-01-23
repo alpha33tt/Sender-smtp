@@ -72,17 +72,14 @@
             <label for="fromEmail">From Email:</label>
             <input type="email" id="fromEmail" placeholder="example@example.com" required>
 
-            <label for="fromName">From Name:</label>
-            <input type="text" id="fromName" placeholder="Sender Name" required>
-
             <label for="toEmails">Recipients (comma-separated):</label>
             <input type="text" id="toEmails" placeholder="recipient1@example.com, recipient2@example.com" required>
 
             <label for="subject">Subject:</label>
             <input type="text" id="subject" placeholder="Email Subject" required>
 
-            <label for="htmlContent">Email Body (HTML):</label>
-            <textarea id="htmlContent" rows="10" placeholder="<h1>Hello</h1><p>This is a test email</p>" required></textarea>
+            <label for="body">Email Body:</label>
+            <textarea id="body" rows="10" placeholder="Your message body here..." required></textarea>
 
             <button type="button" id="sendEmailBtn">Send Email</button>
         </form>
@@ -112,10 +109,9 @@
             }
 
             const fromEmail = document.getElementById('fromEmail').value;
-            const fromName = document.getElementById('fromName').value;
             const toEmails = document.getElementById('toEmails').value.split(',');
             const subject = document.getElementById('subject').value;
-            const htmlContent = document.getElementById('htmlContent').value;
+            const body = document.getElementById('body').value;
 
             const response = await fetch('http://localhost:5000/send_email', {
                 method: 'POST',
@@ -125,10 +121,9 @@
                 },
                 body: JSON.stringify({
                     from_email: fromEmail,
-                    from_name: fromName,
                     to_emails: toEmails,
                     subject: subject,
-                    html_content: htmlContent
+                    body: body
                 })
             });
 
