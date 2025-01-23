@@ -61,6 +61,8 @@
         <div>
             <p>Your API Key: <span id="apiKey" class="api-key">Not Generated</span></p>
             <button id="generateApiKeyBtn">Generate API Key</button>
+            <!-- Button to Copy API Key -->
+            <button id="copyApiKeyBtn" style="display:none;">Copy API Key</button>
         </div>
 
         <form id="emailForm">
@@ -94,7 +96,17 @@
             const result = await response.json();
             apiKey = result.api_key;
             document.getElementById('apiKey').innerText = apiKey;
+            document.getElementById('copyApiKeyBtn').style.display = 'inline-block';  // Show copy button
             alert('API Key generated successfully!');
+        });
+
+        // Copy API Key to clipboard
+        document.getElementById('copyApiKeyBtn').addEventListener('click', () => {
+            if (apiKey) {
+                navigator.clipboard.writeText(apiKey).then(() => {
+                    alert('API Key copied to clipboard!');
+                });
+            }
         });
 
         // Send Email
