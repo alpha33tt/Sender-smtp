@@ -3,135 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Sender</title>
-    
-    <!-- Include TinyMCE with your API key -->
-   <script src="https://cdn.tiny.cloud/1/rusdxyy9xbiaxcj1s1lfoquj6yp4ji0re6b7bzcogi6ew53r/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>
-        tinymce.init({
-            selector: '#body',  // This targets the textarea with id="body"
-            plugins: 'advlist autolink lists link image charmap print preview anchor',
-            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | forecolor | bullist numlist | link image',
-            menubar: false
-        });
-    </script>
-
+    <title>API Key Email Sender</title>
     <style>
-        /* Background color for the entire page */
         body {
-            background-color: #d8cfc4; /* Taupe brown */
             font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 300vh;
-            flex-direction: column;
         }
-
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
         h1 {
             text-align: center;
-            font-size: 3em; /* Increase title size */
-            margin-bottom: 20px;
-            color: #9e1b32; /* Chrome red */
-        }
-
-        /* Style for the form container */
-        form {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 900px; /* Increase form width */
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Style for the form inputs */
-        input[type="text"],
-        input[type="email"],
-        textarea,
-        input[type="file"] {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            background-color: #9e1b32; /* Chrome red */
-            color: white;
-            font-size: 1.1em;
-        }
-
-        /* Button styling */
-        input[type="submit"] {
-            background-color: #9e1b32; /* Chrome red */
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 1.2em;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #7e141e; /* Darker chrome red */
-        }
-
-        label {
-            font-size: 1.2em;
-            font-weight: bold;
             color: #333;
         }
-
-        /* Style for the message display */
-        p {
-            text-align: center;
-            font-size: 1.2em;
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 15px 0 5px;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .api-key {
+            font-weight: bold;
             color: #007bff;
-            margin-top: 20px;
         }
-
-        /* Textarea specific styling */
-        textarea {
-            resize: vertical;
-            min-height: 200px;
+        .message {
+            font-size: 16px;
+            text-align: center;
         }
-
     </style>
 </head>
 <body>
-    <h1>Send Email with Attachments</h1>
+    <div class="container">
+        <h1>API Key Email Sender</h1>
+        <div>
+            <p>Your API Key: <span id="apiKey" class="api-key">Not Generated</span></p>
+            <button id="generateApiKeyBtn">Generate API Key</button>
+        </div>
 
-    <!-- Display message after sending the email -->
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
+        <form id="emailForm">
+            <label for="fromEmail">From Email:</label>
+            <input type="email" id="fromEmail" placeholder="example@example.com" required>
 
-    <form action="/" method="post" enctype="multipart/form-data">
-        <label for="sender_name">Sender Name:</label>
-        <input type="text" id="sender_name" name="sender_name" required><br><br>
+            <label for="fromName">From Name:</label>
+            <input type="text" id="fromName" placeholder="Sender Name" required>
 
-        <label for="reply_to_email">Reply-to Email:</label>
-        <input type="email" id="reply_to_email" name="reply_to_email" required><br><br>
+            <label for="toEmails">Recipients (comma-separated):</label>
+            <input type="text" id="toEmails" placeholder="recipient1@example.com, recipient2@example.com" required>
 
-        <label for="recipient_email">Recipient Email:</label>
-        <input type="email" id="recipient_email" name="recipient_email" required><br><br>
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" placeholder="Email Subject" required>
 
-        <label for="subject">Subject:</label>
-        <input type="text" id="subject" name="subject" required><br><br>
+            <label for="htmlContent">Email Body (HTML):</label>
+            <textarea id="htmlContent" rows="10" placeholder="<h1>Hello</h1><p>This is a test email</p>" required></textarea>
 
-        <label for="body">Email Body (HTML):</label><br>
-        <textarea id="body" name="body" rows="10" required></textarea><br><br>
+            <button type="button" id="sendEmailBtn">Send Email</button>
+        </form>
 
-        <label for="attachments">Attach Files:</label>
-        <input type="file" id="attachments" name="attachments" multiple><br><br>
+        <p id="responseMessage" class="message"></p>
+    </div>
 
-        <input type="submit" value="Send Email">
-    </form>
+    <script>
+        let apiKey = null;
 
+        // Generate API Key
+        document.getElementById('generateApiKeyBtn').addEventListener('click', async () => {
+            const response = await fetch('http://localhost:5000/generate_api_key');
+            const result = await response.json();
+            apiKey = result.api_key;
+            document.getElementById('apiKey').innerText = apiKey;
+            alert('API Key generated successfully!');
+        });
+
+        // Send Email
+        document.getElementById('sendEmailBtn').addEventListener('click', async () => {
+            if (!apiKey) {
+                alert('Please generate an API key first!');
+                return;
+            }
+
+            const fromEmail = document.getElementById('fromEmail').value;
+            const fromName = document.getElementById('fromName').value;
+            const toEmails = document.getElementById('toEmails').value.split(',');
+            const subject = document.getElementById('subject').value;
+            const htmlContent = document.getElementById('htmlContent').value;
+
+            const response = await fetch('http://localhost:5000/send_email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'API-Key': apiKey
+                },
+                body: JSON.stringify({
+                    from_email: fromEmail,
+                    from_name: fromName,
+                    to_emails: toEmails,
+                    subject: subject,
+                    html_content: htmlContent
+                })
+            });
+
+            const result = await response.json();
+            document.getElementById('responseMessage').innerText = result.message || result.error;
+        });
+    </script>
 </body>
 </html>
