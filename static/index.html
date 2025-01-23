@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sender</title>
+    
+    <!-- Include TinyMCE with your API key -->
+   <script src="https://cdn.tiny.cloud/1/rusdxyy9xbiaxcj1s1lfoquj6yp4ji0re6b7bzcogi6ew53r/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#body',  // This targets the textarea with id="body"
+            plugins: 'advlist autolink lists link image charmap print preview anchor',
+            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | forecolor | bullist numlist | link image',
+            menubar: false
+        });
+    </script>
+
+    <style>
+        /* Background color for the entire page */
+        body {
+            background-color: #d8cfc4; /* Taupe brown */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3em; /* Increase title size */
+            margin-bottom: 20px;
+            color: #9e1b32; /* Chrome red */
+        }
+
+        /* Style for the form container */
+        form {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 900px; /* Increase form width */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Style for the form inputs */
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #9e1b32; /* Chrome red */
+            color: white;
+            font-size: 1.1em;
+        }
+
+        /* Button styling */
+        input[type="submit"] {
+            background-color: #9e1b32; /* Chrome red */
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #7e141e; /* Darker chrome red */
+        }
+
+        label {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Style for the message display */
+        p {
+            text-align: center;
+            font-size: 1.2em;
+            color: #007bff;
+            margin-top: 20px;
+        }
+
+        /* Textarea specific styling */
+        textarea {
+            resize: vertical;
+            min-height: 200px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Send Email with Attachments</h1>
+
+    <!-- Display message after sending the email -->
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
+    <form action="/" method="post" enctype="multipart/form-data">
+        <label for="sender_name">Sender Name:</label>
+        <input type="text" id="sender_name" name="sender_name" required><br><br>
+
+        <label for="reply_to_email">Reply-to Email:</label>
+        <input type="email" id="reply_to_email" name="reply_to_email" required><br><br>
+
+        <label for="recipient_email">Recipient Email:</label>
+        <input type="email" id="recipient_email" name="recipient_email" required><br><br>
+
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" required><br><br>
+
+        <label for="body">Email Body (HTML):</label><br>
+        <textarea id="body" name="body" rows="10" required></textarea><br><br>
+
+        <label for="attachments">Attach Files:</label>
+        <input type="file" id="attachments" name="attachments" multiple><br><br>
+
+        <input type="submit" value="Send Email">
+    </form>
+
+</body>
+</html>
