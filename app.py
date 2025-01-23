@@ -29,9 +29,12 @@ def serve_index():
 # Send Email Endpoint
 @app.route('/send_email', methods=['POST'])
 def send_email():
+    # Extract the API Key from request headers
     api_key = request.headers.get('API-Key')
+
+    # Check if API key is provided and valid
     if not api_key or api_key not in api_keys:
-        return jsonify({'error': 'Invalid API key'}), 403
+        return jsonify({'error': 'Please generate an API key first!'}), 403
 
     # Enforce email limit (10,000 emails per API key)
     if api_keys[api_key]['emails_sent'] >= 10000:
