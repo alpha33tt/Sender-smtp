@@ -10,7 +10,7 @@ app = Flask(__name__)
 # In-memory storage for API keys and usage limits
 api_keys = {}
 
-# Generate API Key Endpoint
+# Automatically generate an API key when the page loads
 @app.route('/generate_api_key', methods=['GET'])
 def generate_api_key():
     api_key = str(uuid.uuid4())
@@ -20,11 +20,12 @@ def generate_api_key():
 # Serve the index.html file from the static folder
 @app.route('/')
 def serve_index():
-    try:
-        # This serves the 'index.html' from the 'static' directory
-        return send_from_directory('static', 'index.html')
-    except FileNotFoundError:
-        return jsonify({'error': 'index.html file not found'}), 404
+    # Automatically generate an API key when the page loads
+    api_key = str(uuid.uuid4())
+    api_keys[api_key] = {'emails_sent': 0}
+    
+    # Return the index.html with the generated API key
+    return send_from_directory('static', 'index.html', as_attachment=False)
 
 # Send Email Endpoint
 @app.route('/send_email', methods=['POST'])
